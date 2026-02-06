@@ -21,6 +21,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+
+
 # Create full-screen map
 m = folium.Map(location=[39.5, -98.35], zoom_start=4)
 
