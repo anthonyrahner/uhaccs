@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 import pandas as pd
 import requests
-from io import StringIO
 import time
 import os
 from dotenv import load_dotenv
@@ -24,18 +23,17 @@ def get_live_fires():
         return cached_data
 
     # Fetch new FIRMS data
-    url = f'https://firms.modaps.eosdis.nasa.gov/api/area/csv/{MAP_KEY}/VIIRS_NOAA20_NRT/USA_contiguous_and_Hawaii/1'
-    response = requests.get(url)
-    response.raise_for_status()
+    area_url = 'https://firms.modaps.eosdis.nasa.gov/api/area/csv/' + MAP_KEY + '/VIIRS_NOAA20_NRT/world/1'
+    df_area = pd.read_csv(area_url)
 
-    # Read CSV into pandas
-    df = pd.read_csv(StringIO(response.text))
+    
+    print(df_area.columns.tolist())
 
     # Keep only the important fields
-    df = df[['latitude', 'longitude', 'frp', 'confidence', 'acq_date', 'acq_time', 'daynight']]
+    df_area = df_area[['latitude', 'longitude', 'frp', 'confidence', 'acq_date', 'acq_time', 'daynight']]
 
     # Update cache
-    cached_data = df.to_dict(orient='records')
+    cached_data = df_area.to_dict(orient='records')
     last_fetch_time = current_time
 
     return cached_data
